@@ -15,7 +15,7 @@ object Main {
 	while (true) {
 	  Thread.sleep(1000)
 	  val milis = (System.currentTimeMillis() % 1000 + 1).toInt
-	  producer.send(new ProducerRecord("random1_1000", milis, milis))
+	  print(producer.send(new ProducerRecord("random1_1000", milis, milis)).get().toString())
 	}
 	
 	producer.close()
