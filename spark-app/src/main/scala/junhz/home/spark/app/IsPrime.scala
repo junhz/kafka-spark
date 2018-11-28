@@ -2,10 +2,11 @@ package junhz.home.spark.app
 
 
 import org.apache.spark.{ SparkContext, SparkConf }
+import java.net.InetAddress
 
 object IsPrime {
   val sc = {
-    val ctx = new SparkContext(new SparkConf().setAppName("isPrime").setMaster("spark://localhost:7077"))
+    val ctx = new SparkContext(new SparkConf().setAppName("isPrime").setMaster(s"spark://{InetAddress.getLocalHost().getHostName()}:7077"))
 	sys addShutdownHook {
 	  ctx.stop()
 	}
