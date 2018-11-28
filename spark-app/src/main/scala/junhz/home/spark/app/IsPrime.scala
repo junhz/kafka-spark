@@ -6,7 +6,7 @@ import java.net.InetAddress
 
 object IsPrime {
   val sc = {
-    val ctx = new SparkContext(new SparkConf().setAppName("isPrime").setMaster(s"spark://{InetAddress.getLocalHost().getHostName()}:7077"))
+    val ctx = new SparkContext(new SparkConf().setAppName("isPrime").setMaster(s"spark://${InetAddress.getLocalHost().getHostName()}:7077"))
 	sys addShutdownHook {
 	  ctx.stop()
 	}
