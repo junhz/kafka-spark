@@ -1,4 +1,4 @@
-package junhz.home
+package junhz.home.kafka.producer
 
 import java.util.Properties
 import org.apache.kafka.clients.producer.{ ProducerConfig, KafkaProducer, ProducerRecord }
@@ -12,13 +12,15 @@ object Main {
 	
 	val producer = new KafkaProducer(props, Serdes.Integer().serializer(), Serdes.Integer().serializer())
 	
+	sys addShutdownHook {
+	  producer.close()
+	}
+	
 	while (true) {
 	  Thread.sleep(1000)
 	  val milis = (System.currentTimeMillis() % 1000 + 1).toInt
 	  print(producer.send(new ProducerRecord("random1_1000", milis, milis)).get().toString())
 	}
-	
-	producer.close()
   }
 
 }
