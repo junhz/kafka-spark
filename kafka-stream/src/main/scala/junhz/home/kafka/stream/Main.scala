@@ -20,6 +20,11 @@ object Main {
   }
   
   def main(args: Array[String]): Unit = {
+    try {
+	  val a = junhz.home.spark.app.Main.infra
+	} catch {
+	  case e => e.printStackTrace()
+	}
     infra.kafkaStreams(PrimeOnly("random1_1000", "randomPrime1_1000"), "junhz").start()
 	while (true) {
 	  Thread.sleep(1000)
