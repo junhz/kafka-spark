@@ -8,10 +8,10 @@ import junhz.home.spark.app.IsPrime
 
 object PrimeOnly {
 
-  def apply(fromTopic: String, toTopic: String, sc: SparkContext): Topology = {
+  def apply(fromTopic: String, toTopic: String): Topology = {
     val sb = new StreamsBuilder()
 	sb.stream(fromTopic, Consumed.`with`(Serdes.Integer(), Serdes.Integer()))
-	  .filter((k, v) => IsPrime(sc, k))
+	  .filter((k, v) => true)
 	  .to(toTopic, Produced.`with`(Serdes.Integer(), Serdes.Integer()))
 	sb.build()
   }
