@@ -1,5 +1,6 @@
 package junhz.home.kafka.stream
 
+import junhz.home.spark.app.Main.{ infra => sparkInfra }
 import java.util.Properties
 import org.apache.kafka.streams.{ StreamsConfig, KafkaStreams, Topology }
 
@@ -20,12 +21,7 @@ object Main {
   }
   
   def main(args: Array[String]): Unit = {
-    try {
-	  val a = junhz.home.spark.app.Main.infra
-	} catch {
-	  case e => e.printStackTrace()
-	}
-    infra.kafkaStreams(PrimeOnly("random1_1000", "randomPrime1_1000"), "junhz").start()
+    infra.kafkaStreams(PrimeOnly("random1_1000", "randomPrime1_1000", sparkInfra.sparkContext("isPrime")), "junhz").start()
 	while (true) {
 	  Thread.sleep(1000)
 	}
