@@ -9,7 +9,7 @@ apt-get install openjdk-8-jre-headless -y
 apt-get install git -y
 apt-get install scala -y
 
-# confluent
+#kafka
 cd ~
 wget http://apache.mirrors.hoobly.com/kafka/2.1.0/kafka_2.11-2.1.0.tgz
 cd /usr/lib

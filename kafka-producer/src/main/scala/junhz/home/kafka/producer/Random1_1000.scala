@@ -7,7 +7,7 @@ object Random1_1000 {
   def apply(topic: String, producer: KafkaProducer[Int, Int]): Unit = {
     while (true) {
       Thread.sleep(1000)
-      val milis = (System.currentTimeMillis() % 1000 + 1).toInt
+      val milis = (System.nanoTime() % 1000 + 1).toInt
       print(producer.send(new ProducerRecord(topic, milis, milis)).get().toString())
     }
   }
