@@ -8,4 +8,4 @@ scalaVersion := "2.11.11"
 
 scalacOptions := Seq("-Xexperimental", "-unchecked", "-deprecation")
 
-libraryDependencies ++= Seq("org.apache.spark" %% "spark-streaming-kafka-0-10" % "2.4.0", "org.apache.spark" %% "spark-streaming" % "2.4.0", "org.apache.spark" %% "spark-sql" % "2.4.0")
+libraryDependencies ++= Seq("org.apache.spark" %% "spark-sql-kafka-0-10" % "2.4.0", "org.apache.spark" %% "spark-sql" % "2.4.0")

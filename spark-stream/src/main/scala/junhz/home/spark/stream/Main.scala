@@ -18,9 +18,19 @@ object Main {
 
   def main(args: Array[String]): Unit = {
     val spark = infra.sparkSession("isPrime")
-    val ds = spark.readStream.format("kafka").option("kafka.bootstrap.servers", "localhost:9092").option("subscribe", "random1_1000").load()
-    val s = ds.selectExpr("CAST(key AS INT), CAST(value AS INT)").join(spark.range(1, 1001), pmod(col("value"), col("id")).equalTo(0)).groupBy(col("key"), col("value")).agg(count("*").equalTo(2))
-	val d = s.writeStream.format("kafka").option("kafka.bootstrap.servers", "localhost:9092").option("topic", "randomPrime1_1000").start()
+    val ds = spark.readStream.format("kafka")
+	         .option("kafka.bootstrap.servers", "localhost:9092")
+			 .option("subscribe", "random1_1000")
+			 .option("value.serializer", "org.apache.kafka.common.serialization.IntegerSerializer")
+			 .option("key.serializer", "org.apache.kafka.common.serialization.IntegerSerializer")
+			 .load()
+    val s = ds.selectExpr("CAST(key AS INT)", "CAST(value AS INT)").join(spark.range(1, 1001), pmod(col("value"), col("id")).equalTo(0)).groupBy(col("key"), col("value")).agg(count("*").equalTo(2))
+	val d = s.writeStream.format("kafka")
+	        .option("kafka.bootstrap.servers", "localhost:9092")
+			.option("topic", "randomPrime1_1000")
+			.option("value.serializer", "org.apache.kafka.common.serialization.IntegerDeserializer")
+			.option("key.serializer", "org.apache.kafka.common.serialization.IntegerDeserializer")
+			.start()
 	sys addShutdownHook {
         d.stop()
     }
