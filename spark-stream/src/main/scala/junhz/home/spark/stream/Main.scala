@@ -21,11 +21,11 @@ object Main {
 	  streamingContext, LocationStrategies.PreferConsistent, ConsumerStrategies.Subscribe[Int, Int](Seq("random1_1000"), kafkaParams)
 	)
 	
-	stream filter { record =>
-      !(2 until record.value).exists(i => record.value % i == 0)
-    } foreachRDD { rdd =>
-	  rdd foreach println
-	}
+	(stream map { record =>
+	  record.key
+	} filter { value =>
+      !(2 until value).exists(i => value % i == 0)
+    }).print()
 	
 	streamingContext.start()
 	sys addShutdownHook {
