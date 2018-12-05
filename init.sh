@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #prepare
 ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa

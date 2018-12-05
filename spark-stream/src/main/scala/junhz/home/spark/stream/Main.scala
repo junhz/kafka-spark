@@ -14,7 +14,7 @@ object Main {
 	  "bootstrap.servers" -> "localhost:9092",
 	  "key.deserializer" -> classOf[IntegerDeserializer],
 	  "value.deserializer" -> classOf[IntegerDeserializer],
-	  "group_id" -> "IsPrime_Streaming"
+	  "group.id" -> "IsPrime_Streaming"
 	)
 	
 	val stream = KafkaUtils.createDirectStream[Int, Int](
