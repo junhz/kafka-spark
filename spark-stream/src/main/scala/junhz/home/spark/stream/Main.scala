@@ -22,7 +22,7 @@ object Main {
 	)
 	
 	stream filter { record =>
-      !(2 to record.value).exists(i => record.value % i == 0)
+      !(2 until record.value).exists(i => record.value % i == 0)
     } foreachRDD { rdd =>
 	  rdd foreach println
 	}
