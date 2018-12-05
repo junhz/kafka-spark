@@ -1,40 +1,37 @@
 package junhz.home.spark.stream
 
-
-import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.functions._
-import java.net.InetAddress
+import org.apache.kafka.common.serialization.IntegerDeserializer
+import org.apache.spark.streaming.kafka010._
+import org.apache.spark.streaming._
+import org.apache.spark.SparkConf
 
 object Main {
-  object infra {
-    def sparkSession(appName: String) = {
-	  val session = SparkSession.builder().appName(appName).master(s"spark://${InetAddress.getLocalHost().getHostName()}:7077").getOrCreate()
-	  sys addShutdownHook {
-        session.close()
-      }
-      session
-	}
-  }
 
   def main(args: Array[String]): Unit = {
-    val spark = infra.sparkSession("isPrime")
-    val ds = spark.readStream.format("kafka")
-	         .option("kafka.bootstrap.servers", "localhost:9092")
-			 .option("subscribe", "random1_1000")
-			 .option("value.deserializer", "org.apache.kafka.common.serialization.IntegerDeserializer")
-			 .option("key.deserializer", "org.apache.kafka.common.serialization.IntegerDeserializer")
-			 .load()
-    val s = ds.selectExpr("CAST(key AS INT)", "CAST(value AS INT)").join(spark.range(1, 1001), pmod(col("value"), col("id")).equalTo(0)).groupBy(col("key"), col("value")).agg(count("*").equalTo(2))
-	val d = s.writeStream.format("kafka")
-	        .option("kafka.bootstrap.servers", "localhost:9092")
-			.option("topic", "randomPrime1_1000")
-			.option("value.serializer", "org.apache.kafka.common.serialization.IntegerSerializer")
-			.option("key.serializer", "org.apache.kafka.common.serialization.IntegerSerializer")
-			.start()
+    val streamingContext = new StreamingContext(new SparkConf().setAppName("IsPrime_Streaming"), Seconds(1))
+  
+    val kafkaParams = Map[String, Object](
+	  "bootstrap.servers" -> "localhost:9092",
+	  "key.deserializer" -> classOf[IntegerDeserializer],
+	  "value.deserializer" -> classOf[IntegerDeserializer],
+	  "group_id" -> "IsPrime_Streaming"
+	)
+	
+	val stream = KafkaUtils.createDirectStream[Int, Int](
+	  streamingContext, LocationStrategies.PreferConsistent, ConsumerStrategies.Subscribe[Int, Int](Seq("random1_1000"), kafkaParams)
+	)
+	
+	stream filter { record =>
+      !(2 to record.value).exists(i => record.value % i == 0)
+    } foreachRDD { rdd =>
+	  rdd foreach println
+	}
+	
+	streamingContext.start()
 	sys addShutdownHook {
-        d.stop()
-    }
-	d.awaitTermination()
+	  streamingContext.stop()
+	}
+	streamingContext.awaitTermination()
   }
 
 }
